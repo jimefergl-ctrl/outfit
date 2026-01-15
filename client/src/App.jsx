@@ -5,6 +5,7 @@ import OutfitStylist from './components/OutfitStylist';
 import Avatar3D from './components/Avatar3D';
 import AvatarCustomizer from './components/AvatarCustomizer';
 import Wardrobe from './components/Wardrobe';
+import PinCreator from './components/PinCreator';
 import { useProducts, useOutfitStyling } from './hooks/useProducts';
 import { useWardrobe } from './hooks/useWardrobe';
 import { useAvatar } from './hooks/useAvatar';
@@ -12,6 +13,7 @@ import { useAvatar } from './hooks/useAvatar';
 function App() {
   const [activeTab, setActiveTab] = useState('search');
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [outfitImagesForPin, setOutfitImagesForPin] = useState([]);
 
   const { products, loading, error, searchProducts, clearProducts } = useProducts();
   const { outfit, loading: outfitLoading, generateOutfit, clearOutfit } = useOutfitStyling();
@@ -59,10 +61,16 @@ function App() {
     });
   };
 
+  const handleCreatePinFromOutfit = (images) => {
+    setOutfitImagesForPin(images);
+    setActiveTab('pin');
+  };
+
   const tabs = [
     { id: 'search', label: 'Search', icon: '🔍' },
     { id: 'avatar', label: 'Avatar', icon: '👤' },
-    { id: 'wardrobe', label: 'Wardrobe', icon: '👗' }
+    { id: 'wardrobe', label: 'Wardrobe', icon: '👗' },
+    { id: 'pin', label: 'Create Pin', icon: '📌' }
   ];
 
   return (
@@ -120,6 +128,7 @@ function App() {
                     loading={outfitLoading}
                     baseItem={selectedProduct}
                     onAddToAvatar={handleAddToAvatar}
+                    onCreatePin={handleCreatePinFromOutfit}
                   />
                 )}
               </div>
@@ -165,6 +174,13 @@ function App() {
             outfits={outfits}
             onRemove={removeOutfit}
             onLoad={handleLoadOutfit}
+          />
+        )}
+
+        {activeTab === 'pin' && (
+          <PinCreator
+            preloadedImages={outfitImagesForPin}
+            onImagesLoaded={() => setOutfitImagesForPin([])}
           />
         )}
       </main>

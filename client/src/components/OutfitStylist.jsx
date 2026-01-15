@@ -1,4 +1,4 @@
-function OutfitStylist({ outfit, loading, baseItem, onAddToAvatar }) {
+function OutfitStylist({ outfit, loading, baseItem, onAddToAvatar, onCreatePin }) {
   if (loading) {
     return (
       <div className="card p-6">
@@ -100,6 +100,30 @@ function OutfitStylist({ outfit, loading, baseItem, onAddToAvatar }) {
         <p className="text-gray-500 text-sm">
           No matching items found. Try a different product.
         </p>
+      )}
+
+      {/* Create Pin Button */}
+      {categories.length > 0 && onCreatePin && (
+        <button
+          onClick={() => {
+            // Collect all outfit images including base item
+            const images = [];
+            if (baseItem?.image) {
+              images.push({ url: baseItem.image, title: baseItem.title });
+            }
+            categories.forEach(([category, products]) => {
+              products.slice(0, 2).forEach(product => {
+                if (product.image) {
+                  images.push({ url: product.image, title: product.title });
+                }
+              });
+            });
+            onCreatePin(images);
+          }}
+          className="btn-primary w-full mt-6"
+        >
+          Create Pin from Outfit
+        </button>
       )}
     </div>
   );
